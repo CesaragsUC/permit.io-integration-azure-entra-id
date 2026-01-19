@@ -6,12 +6,14 @@ using Permit.IO.Demo;
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => {
+    options.Filters.Add<PermitAuthorizeFilter>();
+});
 
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IPermitService, PermitService>();
-
+builder.Services.AddScoped<PermitAuthorizeFilter>();
 
 builder.Services.AddSwaggerGen(options =>
 {
@@ -86,7 +88,7 @@ app.UseHttpsRedirection();
 
 // IMPORTANTE: Ordem correta dos middlewares
 app.UseAuthentication();  // 1º - Identifica o usuário
-app.UsePermitAuthorization();  // 2º - Verifica permissões Permit.io
+//app.UsePermitAuthorization();  // 2º - Verifica permissões Permit.io
 app.UseAuthorization();    // 3º - Autorização padrão .NET (se necessário)
 
 app.MapControllers();
